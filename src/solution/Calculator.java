@@ -8,7 +8,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
-
+//more imports
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 
@@ -17,7 +19,8 @@ public class Calculator
     private JFrame calcFrame;
     private JTextField leftOperand;
     private JTextField rightOperand;
-
+    private JLabel resultLabel;
+    private JPanel resultPanel;
     //should be 'getFrame'
    /* public JFrame getcalcFrame()
     {
@@ -58,15 +61,23 @@ public class Calculator
         Calculator.add(results(),BorderLayout.PAGE_END);*/
         JFrame frm = this.getFrame();
         frm.add(calcNorth(),BorderLayout.PAGE_START);
-        frm.add(calcCenter(), BorderLayout.CENTER);
-        frm.add(results(), BorderLayout.PAGE_END);
+        //use layout location the tests want
+        frm.add(calcCenter(), BorderLayout.SOUTH);
+        //use layout location the tests want
+        frm.add(results(), BorderLayout.AFTER_LINE_ENDS);
     }
 
     private JPanel calcNorth()
     {
-        JTextField leftOperand = new JTextField(10);
-        JTextField rightOperand = new JTextField(10);
+        //use global variables, not local here
+        //JTextField leftOperand = new JTextField(10);
+        //JTextField rightOperand = new JTextField(10);
         
+        leftOperand = new JTextField(10);
+        rightOperand = new JTextField(10);
+        //set names
+        leftOperand.setName("leftOperand");
+        rightOperand.setName("rightOperand");
         JPanel calcNorth = new JPanel();
         calcNorth.add(leftOperand);
         calcNorth.add(rightOperand);
@@ -74,13 +85,28 @@ public class Calculator
         return calcNorth;
     }
     private JPanel calcCenter()
-    {
-        JButton addButton = new JButton("+");
+    {//prompt wants different labels
+        /*JButton addButton = new JButton("+");
         JButton subButton = new JButton("-");
         JButton multButton = new JButton("*");
         JButton divButton = new JButton("/");
+        JButton calcTotal = new JButton("=");*/
+        JButton addButton = new JButton("ADD");
+        JButton subButton = new JButton("SUB");
+        JButton multButton = new JButton("MULT");
+        JButton divButton = new JButton("DIV");
         JButton calcTotal = new JButton("=");
         
+        //set Button Names
+        addButton.setName("addButton");
+        subButton.setName("subButton");
+        multButton.setName("multButton");
+        divButton.setName("divButton");
+        calcTotal.setName("calcTotal");
+        addButton.addActionListener(this.addAction());
+        subButton.addActionListener(this.subAction());
+        multButton.addActionListener(this.multAction());
+        divButton.addActionListener(this.divAction());
         JPanel calcCenter = new JPanel();
         calcCenter.add(addButton);
         calcCenter.add(subButton);
@@ -93,7 +119,13 @@ public class Calculator
     //added a results method
     private JPanel results(){
         JPanel res = new JPanel();
-        
+        this.resultPanel = res;
+        //result panel and label with correct name
+        resultLabel = new JLabel();
+        resultLabel.setName("resultLabel");
+        resultLabel.setText("0");
+        //add explicit layout
+        res.add(this.resultLabel,BorderLayout.CENTER);
         return res;
     }
     
@@ -110,5 +142,102 @@ public class Calculator
         }
         
     }
-
+    public ActionListener addAction(){
+        //create an instance of an anonymous class that inherits from ActionListener...
+        Calculator calc = this;
+        ActionListener a = new ActionListener(){
+            public void actionPerformed(ActionEvent E){
+                try
+                {
+                    String lefty = calc.leftOperand.getText();
+                    String righty = calc.rightOperand.getText();
+                    double lft = Double.parseDouble(lefty);
+                    double rt  = Double.parseDouble(righty); 
+                    double rs = lft+rt;
+                    calc.resultLabel.setText(""+rs);
+                }
+                catch (NumberFormatException e)
+                {
+                    //handle non-number input
+                    calc.resultLabel.setText("error");
+                }
+            }
+        };
+        return a;
+    }
+    public ActionListener subAction(){
+        //create an instance of an anonymous class that inherits from ActionListener...
+        Calculator calc = this;
+        ActionListener a = new ActionListener(){
+            public void actionPerformed(ActionEvent E){
+                try
+                {
+                    String lefty = calc.leftOperand.getText();
+                    String righty = calc.rightOperand.getText();
+                    double lft = Double.parseDouble(lefty);
+                    double rt  = Double.parseDouble(righty); 
+                    double rs = lft-rt;
+                    calc.resultLabel.setText(""+rs);
+                }
+                catch (NumberFormatException e)
+                {
+                  //handle non-number input
+                    calc.resultLabel.setText("error");
+                }
+            }
+        };
+        return a;
+    }
+    public ActionListener multAction(){
+        //create an instance of an anonymous class that inherits from ActionListener...
+        Calculator calc = this;
+        ActionListener a = new ActionListener(){
+            public void actionPerformed(ActionEvent E){
+                try
+                {
+                    String lefty = calc.leftOperand.getText();
+                    String righty = calc.rightOperand.getText();
+                    double lft = Double.parseDouble(lefty);
+                    double rt  = Double.parseDouble(righty); 
+                    double rs = lft*rt;
+                    calc.resultLabel.setText(""+rs);
+                }
+                catch (NumberFormatException e)
+                {
+                  //handle non-number input
+                    calc.resultLabel.setText("error");
+                }
+            }
+        };
+        return a;
+    }
+    public ActionListener divAction(){
+        //create an instance of an anonymous class that inherits from ActionListener...
+        Calculator calc = this;
+        ActionListener a = new ActionListener(){
+            public void actionPerformed(ActionEvent E){
+                try
+                {
+                    String lefty = calc.leftOperand.getText();
+                    String righty = calc.rightOperand.getText();
+                    double lft = Double.parseDouble(lefty);
+                    double rt  = Double.parseDouble(righty);
+                    //handle divide by 0
+                    if (rt != 0){
+                        double rs = lft/rt;
+                        calc.resultLabel.setText(""+rs);
+                    }else{
+                        calc.resultLabel.setText("error");
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                  //handle non-number input
+                    calc.resultLabel.setText("error");
+                }
+                
+            }
+        };
+        return a;
+    }
 }
